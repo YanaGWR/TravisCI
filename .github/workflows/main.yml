@@ -9,6 +9,9 @@ on:
     branches: [ master ]
   delete:
     branches: [ master ]
+    
+  workflow_dispatch:
+
 jobs:
 # 多个job，如果有多个，每个以“-”开头
   deploy-job:
