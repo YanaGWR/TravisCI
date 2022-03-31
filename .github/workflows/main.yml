@@ -1,0 +1,38 @@
+name: Build And Deploy To Aliyun ECS
+
+#在满足以下条件触发这个workflow
+on:
+  push:
+    #在指定的远程分支上，发生推送
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  delete:
+    branches: [ master ]
+jobs:
+# 多个job，如果有多个，每个以“-”开头
+  deploy-job:
+    # 该job 运行的系统环境，支持ubuntu 、windows、macOS
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      # step：设置jdk版本
+      # step 名称
+      - name: set up JDK 1.8
+        # 引用公共action
+        uses: actions/setup-java@v1
+        with:
+          # 设置参数
+          java-version: 1.8
+
+      - name: Deploy to aliyun server
+        uses: wlixcc/SFTP-Deploy-Action@v1.0
+        with:
+          username: '${{ secrets.REMOTE_USER }}'
+          server: '${{ secrets.REMOTE_HOST }}' #正式服务器地址
+          ssh_private_key: ${{ secrets.ACCESS_TOKEN }}
+          local_path: "./myapp.war/"
+          remote_path: ${{ secrets.TARGET }} #服务器部署路径
